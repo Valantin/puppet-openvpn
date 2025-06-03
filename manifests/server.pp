@@ -17,7 +17,7 @@
 # @param group User to drop privileges to after startup
 # @param ipp Persist ifconfig information to a file to retain client IP addresses between sessions
 # @param duplicate_cn Allow multiple connections on one cn
-# @param local Interface for openvpn to bind to.
+# @param local Interface(s) for openvpn to bind to. To use the array form you need OpenVPN 2.7 or newer.
 # @param logfile Logfile for this openvpn server
 # @param manage_logfile_directory Manage the directory that the logfile is located in
 # @param logdirectory_user The owner user of the logfile directory
@@ -163,7 +163,7 @@ define openvpn::server (
   Optional[String] $group                                           = undef,
   Boolean $ipp                                                      = false,
   Boolean $duplicate_cn                                             = false,
-  String $local                                                     = $facts['networking']['ip'],
+  Variant[String, Array[String]] $local                             = $facts['networking']['ip'],
   Variant[Boolean, String] $logfile                                 = false,
   Boolean $manage_logfile_directory                                 = false,
   String[1] $logdirectory_user                                      = 'nobody',

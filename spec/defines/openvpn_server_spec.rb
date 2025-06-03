@@ -201,6 +201,43 @@ describe 'openvpn::server' do
         it { is_expected.to contain_file("#{server_directory}/test_server.conf").with_content(%r{^rcvbuf\s+393215$}) }
       end
 
+      context 'with empty local' do
+        let(:params) do
+          {
+            'country' => 'CO',
+            'province' => 'ST',
+            'city' => 'Some City',
+            'organization' => 'example.org',
+            'email' => 'testemail@example.org',
+            'local' => '',
+          }
+        end
+
+        it {
+          is_expected.to contain_file("#{server_directory}/test_server.conf").
+            without_content(%r{^local})
+        }
+      end
+
+      context 'with array local' do
+        let(:params) do
+          {
+            'country' => 'CO',
+            'province' => 'ST',
+            'city' => 'Some City',
+            'organization' => 'example.org',
+            'email' => 'testemail@example.org',
+            'local' => ['1.2.3.4 1194 udp4', '1111::2:3:4 1194 udp6'],
+          }
+        end
+
+        it {
+          is_expected.to contain_file("#{server_directory}/test_server.conf").
+            with_content(%r{^local\s+1\.2\.3\.4 1194 udp4}).
+            with_content(%r{^local\s+1111::2:3:4 1194 udp6})
+        }
+      end
+
       %w[udp tcp udp4 tcp4 udp6 tcp6].each do |proto|
         context "with proto=#{proto}" do
           let(:params) do
