@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v11.0.1](https://github.com/voxpupuli/puppet-openvpn/tree/v11.0.1) (2025-06-10)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-openvpn/compare/v11.0.0...v11.0.1)
+
+**Fixed bugs:**
+
+- Fix easyrsa fact [\#484](https://github.com/voxpupuli/puppet-openvpn/pull/484) ([mouchymouchy](https://github.com/mouchymouchy))
+
 ## [v11.0.0](https://github.com/voxpupuli/puppet-openvpn/tree/v11.0.0) (2025-05-08)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-openvpn/compare/v10.3.0...v11.0.0)
