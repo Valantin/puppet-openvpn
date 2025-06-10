@@ -3,7 +3,7 @@
 Facter.add(:easyrsa) do
   confine kernel: 'Linux'
   setcode do
-    binary = case Facter.value[:os]['family']
+    binary = case Facter.value(:os)['family']
              when 'RedHat'
                '/usr/share/easy-rsa/3/easyrsa'
              when 'Debian'
