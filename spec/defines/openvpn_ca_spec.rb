@@ -107,7 +107,51 @@ describe 'openvpn::ca' do
             with_content(%r{set_var EASYRSA_REQ_CN "yolo"$}).
             with_content(%r{set_var EASYRSA_REQ_OU "NSA"$}).
             with_content(%r{set_var EASYRSA_DIGEST sha256$}).
-            with_content(%r{set_var EASYRSA_KEY_SIZE 2048$})
+            with_content(%r{set_var EASYRSA_KEY_SIZE 2048$}).
+            with_content(%r{set_var EASYRSA_ALGO rsa$}).
+            without_content(%r{set_var EASYRSA_CURVE})
+        }
+      end
+
+      context 'with rsa curves' do
+        let(:params) do
+          {
+            'ssl_key_algo' => 'rsa',
+            'ssl_key_curve' => 'secp384r1',
+          }
+        end
+
+        it {
+          is_expected.to compile.and_raise_error(%r{SSL algo rsa does not support choosing curves - curve secp384r1 supplied.})
+        }
+      end
+
+      context 'with ec key' do
+        let(:params) do
+          {
+            'ssl_key_algo' => 'ec',
+          }
+        end
+
+        it {
+          is_expected.to contain_file("#{server_directory}/test_server/easy-rsa/vars").
+            with_content(%r{set_var EASYRSA_ALGO ec$}).
+            with_content(%r{set_var EASYRSA_CURVE secp384r1$})
+        }
+      end
+
+      context 'with ec chosen curves' do
+        let(:params) do
+          {
+            'ssl_key_algo' => 'ec',
+            'ssl_key_curve' => 'secp521r1',
+          }
+        end
+
+        it {
+          is_expected.to contain_file("#{server_directory}/test_server/easy-rsa/vars").
+            with_content(%r{set_var EASYRSA_ALGO ec$}).
+            with_content(%r{set_var EASYRSA_CURVE secp521r1$})
         }
       end
     end

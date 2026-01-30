@@ -37,7 +37,7 @@ define openvpn::ca (
   Optional[String] $group                                        = undef,
   Enum['rsa', 'ec', 'ed'] $ssl_key_algo                          = 'rsa',
   Integer $ssl_key_size                                          = 2048,
-  String $ssl_key_curve                                          = 'secp384r1',
+  Optional[String] $ssl_key_curve                                = undef,
   Integer $ca_expire                                             = 3650,
   Integer $key_expire                                            = 3650,
   Integer $crl_days                                              = 30,
@@ -50,6 +50,18 @@ define openvpn::ca (
 ) {
   if $tls_auth {
     warning('Parameter $tls_auth is deprecated. Use $tls_static_key instead.')
+  }
+
+  $curve_supported_algos = ['ec', 'ed']
+  if ! ($ssl_key_algo in $curve_supported_algos) {
+    if $ssl_key_curve {
+      fail("SSL algo ${ssl_key_algo} does not support choosing curves - curve ${ssl_key_curve} supplied.")
+    }
+    $_ssl_key_curve = undef
+  } elsif $ssl_key_curve {
+    $_ssl_key_curve = $ssl_key_curve
+  } else {
+    $_ssl_key_curve = 'secp384r1'
   }
 
   include openvpn
@@ -105,7 +117,7 @@ define openvpn::ca (
             'server_directory' => $server_directory,
             'openvpn_server'   => $name,
             'ssl_key_algo'     => $ssl_key_algo,
-            'ssl_key_curve'    => $ssl_key_curve,
+            'ssl_key_curve'    => $_ssl_key_curve,
             'ssl_key_size'     => $ssl_key_size,
             'ca_expire'        => $ca_expire,
             'key_expire'       => $key_expire,
@@ -204,14 +216,16 @@ define openvpn::ca (
             require => Exec["generate server cert ${name}"],
         }
 
-        file { [
-            "${server_directory}/${name}/easy-rsa/keys",
-            "${server_directory}/${name}/easy-rsa/keys/dh.pem",
-          ]:
-            mode    => '0640',
-            owner   => 'openvpn',
-            group   => $openvpn::group,
-            require => Exec["generate dh param ${name}"],
+        if ($ssl_key_algo == 'rsa') {
+          file { [
+              "${server_directory}/${name}/easy-rsa/keys",
+              "${server_directory}/${name}/easy-rsa/keys/dh.pem",
+            ]:
+              mode    => '0640',
+              owner   => 'openvpn',
+              group   => $openvpn::group,
+              require => Exec["generate dh param ${name}"],
+          }
         }
       }
     }

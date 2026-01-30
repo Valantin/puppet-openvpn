@@ -7,7 +7,7 @@ if $facts['os']['family'] == 'RedHat' {
 $netcat_package_name = $facts['os']['family'] ? {
   'Debian' => 'netcat-openbsd',
   'RedHat' => 'nc',
-  'Archlinux' => 'gnu-netcat',
+  'Archlinux' => 'openbsd-netcat',
   default  => 'netcat',
 }
 
