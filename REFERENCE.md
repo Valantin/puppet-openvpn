@@ -1188,9 +1188,9 @@ Default value: `false`
 
 ##### <a name="-openvpn--server--local"></a>`local`
 
-Data type: `String`
+Data type: `Variant[String, Array[String]]`
 
-Interface for openvpn to bind to.
+Interface(s) for openvpn to bind to. To use the array form you need OpenVPN 2.7 or newer.
 
 Default value: `$facts['networking']['ip']`
 

@@ -88,8 +88,11 @@ status <%= @status_log %>
 status-version <%= @status_version %>
 <% end -%>
 dev <%= @dev %>
-<% if @local != '' -%>
-local <%= @local %>
+<% @local = [@local] unless @local.kind_of?(Array) -%>
+<% @local.each do |item| -%>
+<% if item != '' -%>
+local <%= item %>
+<% end -%>
 <% end -%>
 <% if @ipp -%>
 ifconfig-pool-persist <%= @name %>/vpn-ipp.txt
